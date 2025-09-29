@@ -3,7 +3,8 @@ from database import get_db
 from sqlalchemy.orm import Session
 from scheme import students
 from models import studentsModel
-
+from datetime import datetime,date,timedelta
+from sqlalchemy import func
 
 router = APIRouter()
 
@@ -28,6 +29,21 @@ def get_checkIns_student(db:Session =Depends(get_db)):
     return result
 
 
-
-
     
+@router.get("/check_ins/today")
+def total_checkins_today(db: Session = Depends(get_db)):
+
+    today_start = datetime.combine(date.today(), datetime.min.time())
+   
+    today_end = datetime.combine(date.today(), datetime.max.time())
+
+    total = (
+        db.query(func.count(studentsModel.CheckinStudentModel.id))
+        .filter(
+            studentsModel.CheckinStudentModel.timestamp >= today_start,
+            studentsModel.CheckinStudentModel.timestamp <= today_end
+        )
+        .scalar()
+    )
+
+    return {"total_checkins_today": total}
