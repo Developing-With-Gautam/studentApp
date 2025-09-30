@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from database import engine,Base
-from routes import students,checkIn
+from routes import students,checkIn,admin
 
 app= FastAPI()
 Base.metadata.create_all(engine)
@@ -11,5 +11,7 @@ def homepage():
 
 app.include_router(students.router)
 app.include_router(checkIn.router)
+app.include_router(admin.router)
+
 
      
